@@ -499,3 +499,7 @@ grant insert on public.candidature to anon;
 grant execute on all functions in schema public to anon, authenticated;
 alter default privileges in schema public grant select on tables to anon, authenticated;
 alter default privileges in schema public grant insert, update, delete on tables to authenticated;
+-- Accesso completo per le funzioni lato server (mod-workshop, candidatura-discord)
+grant all on all tables in schema public to service_role;
+grant execute on all functions in schema public to service_role;
+alter default privileges in schema public grant all on tables to service_role;

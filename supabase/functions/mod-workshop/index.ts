@@ -154,7 +154,8 @@ Deno.serve(async (req) => {
       const token = (req.headers.get('Authorization') ?? '').replace('Bearer ', '');
       const { data: u } = await admin.auth.getUser(token);
       if (!u?.user) return risposta({ errore: 'Accesso richiesto.' }, 401);
-      const { data: p } = await admin.from('profili').select('stato, permessi').eq('id', u.user.id).single();
+      const { data: p, error: eProf } = await admin.from('profili').select('stato, permessi').eq('id', u.user.id).single();
+      if (eProf) throw new Error(`Impossibile leggere il profilo: ${eProf.message}`);
       const perm: string[] = p?.permessi ?? [];
       if (p?.stato !== 'membro' || !(perm.includes('admin') || perm.includes('mod'))) {
         return risposta({ errore: 'Non hai il permesso di gestire la lista mod.' }, 403);
