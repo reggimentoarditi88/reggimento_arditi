@@ -135,6 +135,18 @@ Da quel momento:
 
 ---
 
+## 7b. (Facoltativo) Annuncio fazione PvP su Discord ogni lunedì
+
+1. Su Discord crea un webhook nel canale dove vuoi l'annuncio (impostazioni canale → Integrazioni → Webhook → Nuovo webhook → copia URL).
+2. Su GitHub → **Settings → Secrets and variables → Actions**:
+   - **Secrets** → `DISCORD_WEBHOOK_FAZIONE` = l'URL del webhook
+   - **Variables** → `SITE_URL` = `https://reggimentoarditi88.github.io/reggimento_arditi/`
+3. Prova subito: **Actions → Annuncio fazione PvP → Run workflow**.
+
+Ogni lunedì mattina arriverà l'annuncio con la fazione della settimana. La rotazione si corregge dal sito: **Server → Correggi rotazione** (amministratori).
+
+---
+
 ## 8. (Facoltativo) Candidature notificate su Discord
 
 1. Crea un webhook nel canale Discord dello staff (come al passo 6).
