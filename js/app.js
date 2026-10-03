@@ -9,6 +9,7 @@ import { organico, profilo, gestione } from './views/membri.js';
 import { campagne, campagna } from './views/campagne.js';
 import { mod } from './views/mod.js';
 import { social, aggiornaFooterSocial } from './views/social.js';
+import { regolamento } from './views/regolamento.js';
 
 // [percorso, pagina, pubblica?]
 const ROTTE = [
@@ -18,6 +19,7 @@ const ROTTE = [
   [/^\/organico$/, organico, true],
   [/^\/profilo(?:\/([\w-]+))?$/, profilo, true],
   [/^\/social$/, social, true],
+  [/^\/regolamento$/, regolamento, true],
   [/^\/calendario$/, calendario],
   [/^\/evento\/([\w-]+)$/, evento],
   [/^\/comunicazioni$/, comunicazioni],
@@ -80,7 +82,11 @@ function voceMenu(h, chiave, def, icona, path) {
 
 function aggiornaMenu(path = location.hash.replace(/^#/, '') || '/') {
   const m = membro();
-  const voci = [voceMenu('#/chi-siamo', 'menu.chi', 'Chi siamo', 'info', path), voceMenu('#/organico', 'menu.org', 'Organico', 'users', path)];
+  const voci = [
+    voceMenu('#/chi-siamo', 'menu.chi', 'Chi siamo', 'info', path),
+    voceMenu('#/organico', 'menu.org', 'Organico', 'users', path),
+    voceMenu('#/regolamento', 'menu.rego', 'Regolamento', 'scale', path),
+  ];
   if (m) {
     voci.push(voceMenu('#/calendario', 'menu.cal', 'Calendario', 'calendar-days', path));
     voci.push(voceMenu('#/comunicazioni', 'menu.com', 'Comunicazioni', 'megaphone', path));

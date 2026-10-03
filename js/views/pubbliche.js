@@ -284,7 +284,7 @@ export async function reclutamento(app) {
         <div class="field full"><label for="c-esp">${T('recl.q.esp', 'Esperienza su Arma Reforger / Arma / milsim')} *</label><textarea id="c-esp" name="esperienza" rows="3" required maxlength="1000"></textarea></div>
         <div class="field full"><label for="c-mot">${T('recl.q.mot', 'Perché vuoi entrare nel Reggimento Arditi?')} *</label><textarea id="c-mot" name="motivazione" rows="4" required maxlength="2000"></textarea></div>
         <div class="field full"><label for="c-prov">${T('recl.q.prov', 'Come ci hai conosciuto?')}</label><input id="c-prov" name="provenienza" maxlength="200"></div>
-        <label class="field check full"><input type="checkbox" required> <span>${T('recl.q.ok', 'Ho un microfono funzionante e accetto di rispettare il regolamento del gruppo')} *</span></label>
+        <label class="field check full"><input type="checkbox" required> <span>${T('recl.q.ok', 'Ho un microfono funzionante e accetto di rispettare il regolamento del gruppo')} * — <a href="#/regolamento" target="_blank">${T('recl.q.leggi', 'leggi il regolamento')}</a></span></label>
       </div>
       <div class="form-foot"><button class="btn btn-primary btn-lg" type="submit">${ic('send')} ${T('recl.invia', 'Invia candidatura')}</button></div>
     </form>`;
