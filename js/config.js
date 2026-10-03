@@ -7,8 +7,8 @@
 export const CONFIG = {
   // Dati del progetto Supabase (Project Settings → API).
   // Finché sono vuoti il sito gira in MODALITÀ DEMO con dati di esempio.
-  SUPABASE_URL: '',
-  SUPABASE_ANON_KEY: '',
+  SUPABASE_URL: 'https://xklsggeozngzmgggosbl.supabase.co',
+  SUPABASE_ANON_KEY: 'sb_publishable_AjSbmzbp2p8hiLFl4UymVQ_hXF1jn3m',
 
   NOME: 'Reggimento Arditi',
   DISCORD_INVITE: 'https://discord.gg/sebbFmjhze',

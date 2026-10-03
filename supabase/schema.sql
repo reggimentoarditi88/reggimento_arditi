@@ -488,3 +488,14 @@ on conflict (chiave) do nothing;
 insert into public.campagne (titolo, sottotitolo, stato, briefing, ordine)
 select 'Campagna Gogland', 'Isola di Gogland', 'attiva', 'Scrivi qui il briefing della campagna.', 1
 where not exists (select 1 from public.campagne);
+
+-- ---------- PERMESSI DI ACCESSO ALLE TABELLE ----------
+-- I progetti Supabase recenti non concedono più l'accesso in automatico.
+-- Chi vede o modifica cosa resta deciso dalle regole (policy) definite sopra.
+grant usage on schema public to anon, authenticated;
+grant select on all tables in schema public to anon, authenticated;
+grant insert, update, delete on all tables in schema public to authenticated;
+grant insert on public.candidature to anon;
+grant execute on all functions in schema public to anon, authenticated;
+alter default privileges in schema public grant select on tables to anon, authenticated;
+alter default privileges in schema public grant insert, update, delete on tables to authenticated;
