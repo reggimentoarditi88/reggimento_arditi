@@ -164,12 +164,16 @@ export async function profilo(app, id) {
       { name: 'grado', label: 'Grado', type: 'select', value: p.grado, options: GRADI.map((g, i) => [i, g]).reverse() },
       { name: 'ruolo', label: 'Ruolo', type: 'select', value: p.ruolo || '', options: [['', '—'], ...Object.keys(RUOLI).map((r) => [r, r])] },
       { name: 'specializzazioni', label: 'Specializzazioni', type: 'checks', value: p.specializzazioni || [], options: Object.keys(SPECIALIZZAZIONI).map((s) => [s, s]) },
-      { name: 'punti_usati', label: 'Punti già usati per promozioni', type: 'number', min: 0, value: p.punti_usati || 0, help: 'Si aggiorna da solo con il pulsante Promuovi. Modificalo solo per correzioni.' },
+      { name: 'punti_grado', label: `Punti grado attuali (0–${CONFIG.PUNTI_PROMOZIONE - 1})`, type: 'number', min: 0, max: CONFIG.PUNTI_PROMOZIONE - 1, value: pg, required: true,
+        help: `Punti accumulati verso il prossimo grado. Usalo per inserire chi aveva già dei punti prima del sito; i nuovi punti si aggiungono con "Aggiungi / togli punti".` },
     ]);
     if (!r) return;
     r.grado = Number(r.grado);
     r.ruolo = r.ruolo || null;
-    try { await db.update('profili', { id }, r); toast('Profilo aggiornato'); ricarica(); } catch (e) { errore(e); }
+    // I punti grado sono "punti totali − punti già consumati dalle promozioni": ricaviamo il secondo dal valore scelto
+    const { punti_grado: nuoviPg, ...dati } = r;
+    if (nuoviPg !== pg) dati.punti_usati = totale - Math.max(0, Math.min(CONFIG.PUNTI_PROMOZIONE - 1, nuoviPg));
+    try { await db.update('profili', { id }, dati); toast('Profilo aggiornato'); ricarica(); } catch (e) { errore(e); }
   });
   $('#promo')?.addEventListener('click', async () => {
     const nuovo = GRADI[p.grado + 1];

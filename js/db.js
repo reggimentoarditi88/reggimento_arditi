@@ -2,7 +2,8 @@
 import { CONFIG } from './config.js';
 import { seed } from './demo.js';
 
-export const DEMO = !CONFIG.SUPABASE_URL || !CONFIG.SUPABASE_ANON_KEY;
+// Con ?demo nell'indirizzo il sito usa i dati di esempio (utile per provare modifiche senza toccare i dati veri)
+export const DEMO = !CONFIG.SUPABASE_URL || !CONFIG.SUPABASE_ANON_KEY || new URLSearchParams(location.search).has('demo');
 
 // flowType 'pkce': dopo il login Discord il codice torna in ?code=… e non nell'#hash usato dalla navigazione
 const sb = DEMO ? null : window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY, {
