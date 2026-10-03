@@ -1,0 +1,23 @@
+name: Mantieni attivo Supabase
+
+# Il piano gratuito di Supabase mette in pausa i progetti senza attività per 7 giorni.
+# Questa azione fa una piccola lettura ogni giorno per evitarlo.
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping del database
+        env:
+          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ vars.SUPABASE_ANON_KEY }}
+        run: |
+          if [ -z "$SUPABASE_URL" ]; then echo "SUPABASE_URL non impostato, salto."; exit 0; fi
+          curl -sf "$SUPABASE_URL/rest/v1/contenuti?select=chiave&limit=1" \
+            -H "apikey: $SUPABASE_ANON_KEY" -H "Authorization: Bearer $SUPABASE_ANON_KEY" > /dev/null
+          echo "Supabase raggiunto."

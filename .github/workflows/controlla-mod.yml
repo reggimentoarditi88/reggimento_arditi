@@ -1,0 +1,26 @@
+name: Controlla aggiornamenti mod
+
+# Ogni 3 ore chiede alla funzione Supabase "mod-workshop" di ricontrollare il Workshop:
+# se una mod è stata aggiornata, la lista e il changelog sul sito si aggiornano da soli.
+
+on:
+  schedule:
+    - cron: '17 */3 * * *'
+  workflow_dispatch:
+
+jobs:
+  controlla:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Controllo del Workshop
+        env:
+          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ vars.SUPABASE_ANON_KEY }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$CRON_SECRET" ]; then echo "SUPABASE_URL o CRON_SECRET non impostati, salto."; exit 0; fi
+          curl -sf -X POST "$SUPABASE_URL/functions/v1/mod-workshop" \
+            -H "apikey: $SUPABASE_ANON_KEY" -H "Content-Type: application/json" \
+            -H "x-cron-secret: $CRON_SECRET" \
+            -d '{"azione":"aggiorna"}'
+          echo

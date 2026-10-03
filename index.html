@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reggimento Arditi</title>
+  <meta name="description" content="Reggimento Arditi — gruppo milsim italiano su Arma Reforger. Milsim, addestramenti, campagne e reclutamento.">
+  <meta property="og:title" content="Reggimento Arditi">
+  <meta property="og:description" content="Gruppo milsim italiano su Arma Reforger">
+  <meta property="og:image" content="assets/logo.webp">
+  <meta name="theme-color" content="#0c0e0a">
+  <link rel="icon" href="assets/logo.webp" type="image/webp">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Lora:ital,wght@0,400;0,600;1,400&family=Special+Elite&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.15/locales/it.global.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="#/" class="brand">
+        <img src="assets/logo.webp" alt="" width="40" height="40">
+        <span>Reggimento <b>Arditi</b></span>
+      </a>
+      <button class="icon-btn burger" id="burger" aria-label="Apri menu" aria-expanded="false" aria-controls="nav"><i data-lucide="menu"></i></button>
+      <nav id="nav" aria-label="Menu principale">
+        <ul id="menu"></ul>
+        <div id="user" class="user"></div>
+      </nav>
+    </div>
+    <div class="tricolor-line" aria-hidden="true"></div>
+  </header>
+  <div id="banner"></div>
+
+  <main id="app" class="container" aria-live="polite">
+    <div class="loader" aria-label="Caricamento"><span></span><span></span><span></span></div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="brand small"><img src="assets/logo.webp" alt="" width="28" height="28"> Reggimento Arditi · <span id="footer-year"></span></div>
+      <div class="muted small" id="footer-note"></div>
+      <div class="footer-social" id="footer-social" aria-label="Social"></div>
+    </div>
+  </footer>
+  <div id="toasts" aria-live="polite"></div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
