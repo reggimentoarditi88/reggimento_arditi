@@ -1,0 +1,57 @@
+name: Annuncio fazione PvP
+
+# Ogni lunedì mattina annuncia su Discord la fazione PvP della settimana (USA / Russia).
+# La rotazione è la stessa calcolata dal sito (punto di partenza in contenuti → fazione.riferimento).
+
+on:
+  schedule:
+    - cron: '5 6 * * 1'   # lunedì 06:05 UTC = 07:05/08:05 in Italia
+  workflow_dispatch:
+
+jobs:
+  annuncio:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Calcola la fazione e pubblica su Discord
+        env:
+          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ vars.SUPABASE_ANON_KEY }}
+          SITE_URL: ${{ vars.SITE_URL }}
+          WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_FAZIONE }}
+        run: |
+          if [ -z "$WEBHOOK" ]; then echo "DISCORD_WEBHOOK_FAZIONE non impostato, salto."; exit 0; fi
+
+          # Punto di partenza della rotazione (impostabile dal sito), altrimenti 28/09/2026 = USA
+          RIF=""
+          if [ -n "$SUPABASE_URL" ]; then
+            RIF=$(curl -sf "$SUPABASE_URL/rest/v1/contenuti?chiave=eq.fazione.riferimento&select=testo" \
+              -H "apikey: $SUPABASE_ANON_KEY" | jq -r '.[0].testo // empty' || true)
+          fi
+          LUNEDI=$(echo "$RIF" | jq -r '.lunedi // empty' 2>/dev/null || true)
+          FAZ=$(echo "$RIF" | jq -r '.fazione // empty' 2>/dev/null || true)
+          [ -z "$LUNEDI" ] && LUNEDI="2026-09-28"
+          [ -z "$FAZ" ] && FAZ="USA"
+
+          OGGI=$(TZ=Europe/Rome date +%F)
+          DOW=$(date -d "$OGGI" +%u)
+          QUESTO_LUNEDI=$(date -d "$OGGI -$((DOW - 1)) days" +%F)
+          SETT=$(( ( $(date -ud "$QUESTO_LUNEDI" +%s) - $(date -ud "$LUNEDI" +%s) ) / 604800 ))
+          if [ $(( (SETT % 2 + 2) % 2 )) -eq 0 ]; then ORA="$FAZ"; else
+            if [ "$FAZ" = "USA" ]; then ORA="RUSSIA"; else ORA="USA"; fi
+          fi
+          if [ "$ORA" = "USA" ]; then NOME="USA 🇺🇸"; DOPO="Russia 🇷🇺"; COLORE=4882392; else NOME="RUSSIA 🇷🇺"; DOPO="USA 🇺🇸"; COLORE=13780026; fi
+          FINE=$(date -d "$QUESTO_LUNEDI +6 days" +%d/%m)
+          INIZIO=$(date -d "$QUESTO_LUNEDI" +%d/%m)
+          echo "Settimana $INIZIO-$FINE: $ORA"
+
+          jq -n --arg nome "$NOME" --arg dopo "$DOPO" --arg dal "$INIZIO" --arg al "$FINE" \
+                --arg url "${SITE_URL:+${SITE_URL}#/server}" --argjson colore "$COLORE" '{
+            username: "Reggimento Arditi",
+            embeds: [{
+              title: ("🔄 Cambio fazione PvP — si gioca " + $nome),
+              description: ("Da oggi (**" + $dal + "**) fino a domenica **" + $al + "** nei server PvP pubblici entriamo tutti nella fazione **" + $nome + "**.\nLunedì prossimo si passa a **" + $dopo + "**.\n\nRicordate: il primo che entra crea il gruppo **REGGIMENTO ARDITI** (pubblico)."),
+              color: $colore,
+              url: (if $url == "" then null else $url end)
+            }]
+          }' | curl -sf -X POST -H "Content-Type: application/json" -d @- "$WEBHOOK"
+          echo "Annuncio inviato."

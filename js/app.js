@@ -10,6 +10,7 @@ import { campagne, campagna } from './views/campagne.js';
 import { mod } from './views/mod.js';
 import { social, aggiornaFooterSocial } from './views/social.js';
 import { regolamento } from './views/regolamento.js';
+import { barraFazione } from './fazione.js';
 
 // [percorso, pagina, pubblica?]
 const ROTTE = [
@@ -121,6 +122,7 @@ function aggiornaMenu(path = location.hash.replace(/^#/, '') || '/') {
   $('#banner').innerHTML = [
     DEMO ? `<div class="banner banner-demo">${ic('flask-conical')} Modalità demo: dati di esempio, le modifiche si perdono ricaricando. Esci per vedere il sito come un visitatore.</div>` : '',
     me && me.stato === 'in_attesa' ? `<div class="banner">${ic('hourglass')} Il tuo account è in attesa di approvazione da parte del Direttivo.</div>` : '',
+    membro() ? barraFazione() : '',
   ].join('');
   icone($('.topbar'));
   icone($('#banner'));

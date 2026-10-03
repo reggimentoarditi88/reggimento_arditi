@@ -4,6 +4,7 @@ import { db, storage } from '../db.js';
 import { stato, can, membro, loggato, puntiEvento } from '../state.js';
 import { ic, T } from '../ui.js';
 import { dopoModificaPunti } from './membri.js';
+import { eventiFazione } from '../fazione.js';
 import { esc, md, data, ora, dataOra, badgeTipo, badgeGrado, avatar, nomeMembro, modulo, conferma, toast, errore, vuoto, titoloPagina, toLocalInput, $, $$ } from '../ui.js';
 
 // ---------- CALENDARIO ----------
@@ -37,14 +38,20 @@ export async function calendario(app) {
       headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,listMonth' },
       buttonText: { today: 'Oggi', month: 'Mese', week: 'Settimana', list: 'Elenco' },
       eventTimeFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
-      events: eventi.map((e) => ({
-        id: e.id,
-        title: e.titolo,
-        start: e.inizio,
-        end: e.fine || undefined,
-        color: (TIPI_EVENTO[e.tipo] || TIPI_EVENTO.altro).color,
-      })),
-      eventClick: (info) => { info.jsEvent.preventDefault(); location.hash = `#/evento/${info.event.id}`; },
+      events: [
+        ...eventiFazione(),
+        ...eventi.map((e) => ({
+          id: e.id,
+          title: e.titolo,
+          start: e.inizio,
+          end: e.fine || undefined,
+          color: (TIPI_EVENTO[e.tipo] || TIPI_EVENTO.altro).color,
+        })),
+      ],
+      eventClick: (info) => {
+        info.jsEvent.preventDefault();
+        location.hash = info.event.url ? info.event.url : `#/evento/${info.event.id}`;
+      },
     });
     cal.render();
   } else {

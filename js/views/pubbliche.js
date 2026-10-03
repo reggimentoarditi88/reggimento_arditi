@@ -3,6 +3,7 @@ import { CONFIG, GRADI, RUOLI, SPECIALIZZAZIONI, categoriaGrado, STATI_SETTORE, 
 import { db } from '../db.js';
 import { can, membro, stato } from '../state.js';
 import { esc, md, ic, T, TM, testo, dataOra, dataBreve, ora, bytes, badgeTipo, modulo, conferma, toast, errore, vuoto, titoloPagina, $, $$ } from '../ui.js';
+import { FAZIONI, bandiera, riquadroFazione, annuncioFazione, correggiRotazione } from '../fazione.js';
 
 // ---------- HOME ----------
 export async function home(app) {
@@ -56,6 +57,7 @@ export async function home(app) {
   const attive = stato.campagne.filter((c) => c.stato === 'attiva');
 
   app.innerHTML = `${hero}
+    ${riquadroFazione()}
     <div class="grid-home reveal">
       <section class="card">
         <header class="card-head"><h2>${ic('calendar-days')} ${T('home.d.eventi', 'Prossime operazioni')}</h2><a href="#/calendario" class="more">${T('home.d.calendario', 'Calendario')} ${ic('arrow-right')}</a></header>
@@ -174,6 +176,7 @@ export async function server(app) {
 
   app.innerHTML = `
     ${titoloPagina('server', 'Server', 'I server dove gioca il Reggimento.', can('server') ? `<button class="btn btn-primary" id="add">${ic('plus')} Aggiungi server</button>` : '')}
+    ${riquadroFazione({ dettagli: true, admin: can('admin') })}
     ${['privato', 'pvp', 'altro'].map((t) => gruppo(t).length ? `<h2 class="section-title">${T(`server.gruppo.${t}`, TIPI_SERVER[t])}</h2><div class="grid-cards wide">${gruppo(t).map(card).join('')}</div>` : '').join('')}
     ${!lista.length ? vuoto('Nessun server inserito.') : ''}`;
 
@@ -184,6 +187,7 @@ export async function server(app) {
     try { await db.remove('server', { id: b.dataset.del }); server(app); } catch (e) { errore(e); }
   }));
   $('#add')?.addEventListener('click', () => modificaServer(null, app));
+  $('#fazione-edit')?.addEventListener('click', correggiRotazione);
   $$('.live[data-bm]', app).forEach(statoLive);
 }
 
@@ -225,7 +229,16 @@ export async function comunicazioni(app) {
   const lista = await db.list('comunicazioni', { order: 'creato_il', asc: false });
   app.innerHTML = `
     ${titoloPagina('com', 'Comunicazioni', 'Annunci e ordini dal Direttivo.', can('comunicazioni') ? `<button class="btn btn-primary" id="add">${ic('plus')} Nuova comunicazione</button>` : '')}
-    <div class="news-list">${lista.map((c) => `
+    <div class="news-list">${(() => {
+      const a = annuncioFazione();
+      return `<article class="card news news-fazione" style="--f:${FAZIONI[a.fazione].colore}">
+        <header>
+          <div class="muted small">${ic('pin')} ${T('com.fazione.tag', 'Annuncio automatico · si aggiorna ogni lunedì')}</div>
+          <h2>${bandiera(a.fazione)} ${esc(a.titolo)}</h2>
+        </header>
+        <div class="prose">${md(a.testo)}</div>
+      </article>`;
+    })()}${lista.map((c) => `
       <article class="card news prio-${c.priorita}">
         <header>
           <div class="muted small">${dataOra(c.creato_il)} ${c.priorita !== 'normale' ? `<span class="tag tag-${c.priorita}">${esc(PRIORITA[c.priorita])}</span>` : ''}</div>
